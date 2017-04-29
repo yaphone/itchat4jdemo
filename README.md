@@ -6,7 +6,7 @@
 
 ![项目结构](http://oj5vdtyuu.bkt.clouddn.com/itchat4jdemo%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84.png)
 
-在该示例项目中，demo1包中为简单示例项目，收到文本信息直接返回原消息给发送者，图片、语音、小视频文件根据路径保存，demo2包中为图灵机器人示例，demo3包请忽略。(是我专门为Windows平台做的一个小示例，打包后可直接在windows平台下运行)
+在该示例项目中，lib文件夹下为itchat4j程序，加入Build path即可。demo1包中为简单示例项目，收到文本信息直接返回原消息给发送者，图片、语音、小视频文件根据路径保存，demo2包中为图灵机器人示例，demo3包请忽略。(是我专门为Windows平台做的一个小示例，打包后可直接在windows平台下运行)
 
 ## 项目介绍
 
