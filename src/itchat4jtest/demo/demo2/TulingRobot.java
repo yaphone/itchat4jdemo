@@ -77,4 +77,9 @@ public class TulingRobot implements IMsgHandlerFace {
 		wechat.start();
 	}
 
+	@Override
+	public String nameCardMsgHandle(JSONObject arg0) {
+		return "收到名片消息";
+	}
+
 }

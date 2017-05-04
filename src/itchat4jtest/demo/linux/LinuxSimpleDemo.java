@@ -68,4 +68,9 @@ public class LinuxSimpleDemo implements IMsgHandlerFace {
 		Wechat wechat = new Wechat(msgHandler, "/home/itchat4j/demo/itchat4j/login");
 		wechat.start();
 	}
+
+	@Override
+	public String nameCardMsgHandle(JSONObject arg0) {
+		return "收到名片消息";
+	}
 }

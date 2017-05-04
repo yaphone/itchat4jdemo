@@ -51,4 +51,9 @@ public class SimpleDemo implements IMsgHandlerFace {
 		return "视频保存成功";
 	}
 
+	@Override
+	public String nameCardMsgHandle(JSONObject arg0) {
+		return "收到名片消息";
+	}
+
 }
