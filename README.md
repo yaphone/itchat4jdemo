@@ -18,7 +18,7 @@
 
 然后配置好你的Java环境变量，通过命令`java -jar 路径/windows_itchat4j.jar`来执行程序，之后，打开`D:/login`文件夹，扫描二维码即可登陆，登陆成功后，可接收文本消息，收到图片、语音、小视频消息后会保存在对应目录：
 
-![Windows控制台](http://oj5vdtyuu.bkt.clouddn.com/Windows%E6%8E%A7%E5%88%B6%E5%8F%B0.png)
+![Windows控制台](http://oj5vdtyuu.bkt.clouddn.com/windows%E5%8F%AF%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F.png)
 
 ![文件保存](http://oj5vdtyuu.bkt.clouddn.com/windows%E6%94%B6%E5%88%B0%E6%96%87%E4%BB%B6.png)
 
@@ -68,7 +68,7 @@ public class MsgHandler implements IMsgHandlerFace {
 
 在`textMsgHandler`中，通过`msg.getString("Text")`就可以获取收到的文本信息，然后作进一步处理，比如接入图灵机器人、消息自动回复等，我们需要在这个方法中返回一个字符串，即是需要回复给好友的消息，在SimpleDemo这个示例中，我们直接回复收到的原文本消息。
 
-在`picMsgHandle`、`voiceMsgHandle`、`viedoMsgHandle`这三个方法中，我们需要将这些消息下载下来，然后再作进一步处理，所以需要为每种类型的消息提供一个保存路径，然后调用`DownloadTools.getDownloadFn`方法可以将这三种类型的消息下载下来。`DownloadTools.getDownloadFn`方法提供下载图片、语音、小视频的功能，需要三个参数，第一个参数为我们收到的msg，第二个参数为`MsgType`，也就是消息类型，图片、语音、小视频分别对应`MsgType.PIC`、`MsgType.VOICE`、`MsgType.VOICE`，然后第三个参数就是保存这些消息的路径了。
+在`picMsgHandle`、`voiceMsgHandle`、`viedoMsgHandle`这三个方法中，我们需要将这些消息下载下来，然后再作进一步处理，所以需要为每种类型的消息提供一个保存路径，然后调用`DownloadTools.getDownloadFn`方法可以将这三种类型的消息下载下来。`DownloadTools.getDownloadFn`方法提供下载图片、语音、小视频的功能，需要三个参数，第一个参数为我们收到的msg，第二个参数为`MsgType`，也就是消息类型，图片、语音、小视频分别对应`MsgTypeEnum.PIC.getType()`、`MsgTypeEnum.VOICE.getType()`、`MsgTypeEnum.VIEDO.getType()`，然后第三个参数就是保存这些消息的路径了。
 
 就不多说了，让代码和注释君自述吧，有不明白的地方，可以在Issue中提出来。
 
@@ -93,7 +93,7 @@ public class SimpleDemo implements IMsgHandlerFace {
 	public String picMsgHandle(JSONObject msg) {
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()) + ".jpg"; // 这里使用收到图片的时间作为文件名
 		String picPath = "D://itchat4j/pic" + File.separator + fileName; // 保存图片的路径
-		DownloadTools.getDownloadFn(msg, MsgType.PIC, picPath); // 调用此方法来保存图片
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.PIC.getType(), picPath); // 调用此方法来保存图片
 		return "图片保存成功";
 	}
 
@@ -101,17 +101,21 @@ public class SimpleDemo implements IMsgHandlerFace {
 	public String voiceMsgHandle(JSONObject msg) {
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()) + ".mp3"; // 这里使用收到语音的时间作为文件名
 		String voicePath = "D://itchat4j/voice" + File.separator + fileName; // 保存语音的路径
-		DownloadTools.getDownloadFn(msg, MsgType.VOICE, voicePath); // 调用此方法来保存语音
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VOICE.getType(), voicePath); // 调用此方法来保存语音
 		return "声音保存成功";
 	}
 
 	@Override
 	public String viedoMsgHandle(JSONObject msg) {
-		System.out.println(msg);
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()) + ".mp4"; // 这里使用收到小视频的时间作为文件名
 		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName;// 保存小视频的路径
-		DownloadTools.getDownloadFn(msg, MsgType.VIEDO, viedoPath);// 调用此方法来保存小视频
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);// 调用此方法来保存小视频
 		return "视频保存成功";
+	}
+
+	@Override
+	public String nameCardMsgHandle(JSONObject arg0) {
+		return "收到名片消息";
 	}
 
 }
@@ -136,7 +140,9 @@ public class Mytest {
 		Wechat wechat = new Wechat(msgHandler, qrPath); // 【注入】
 		wechat.start(); // 启动服务，会在qrPath下生成一张二维码图片，扫描即可登陆，注意，二维码图片如果超过一定时间未扫描会过期，过期时会自动更新，所以你可能需要重新打开图片
 	}
+
 }
+
 ```
 
 ### Demo2 图灵机器人
@@ -156,7 +162,7 @@ public class Mytest {
  */
 public class TulingRobot implements IMsgHandlerFace {
 
-	MyHttpClient myHttpClient = new MyHttpClient();
+	MyHttpClient myHttpClient = MyHttpClient.getInstance();
 	String apiKey = "597b34bea4ec4c85a775c469c84b6817"; // 这里是我申请的图灵机器人API接口，每天只能5000次调用，建议自己去申请一个，免费的:)
 	Logger logger = Logger.getLogger("TulingRobot");
 
@@ -207,6 +213,11 @@ public class TulingRobot implements IMsgHandlerFace {
 		IMsgHandlerFace msgHandler = new TulingRobot();
 		Wechat wechat = new Wechat(msgHandler, "/home/itchat4j/demo/itchat4j/login");
 		wechat.start();
+	}
+
+	@Override
+	public String nameCardMsgHandle(JSONObject arg0) {
+		return "收到名片消息";
 	}
 
 }
